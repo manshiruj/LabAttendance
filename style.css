@@ -29,7 +29,7 @@ html, body {
 .auth-wrap {
   max-width: 400px;
   margin: 0 auto;
-  padding: 60px 24px 40px;
+  padding: 60px 24px 100px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -93,17 +93,19 @@ html, body {
 .btn-link:hover { color: var(--black); }
 
 .admin-entry-wrap {
-  margin-top: 8px;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
   text-align: center;
+  padding: 16px 20px 32px;
+  background: var(--white);
   border-top: 1px solid var(--grey-2);
-  padding-top: 16px;
 }
 .admin-entry-btn {
-  font-size: 12px;
-  color: var(--grey-3);
-  letter-spacing: 0.04em;
+  font-size: 13px;
+  color: var(--grey-4);
+  letter-spacing: 0.03em;
 }
-.admin-entry-btn:hover { color: var(--grey-5); }
+.admin-entry-btn:hover { color: var(--black); }
 
 /* ── HEADER ── */
 header {
