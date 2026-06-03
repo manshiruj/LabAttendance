@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LabAttend — IIT ISM</title>
+  <meta name="description" content="Lab Attendance System — IIT ISM Dhanbad" />
+  <meta name="theme-color" content="#111111" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="LabAttend" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- SCREEN: PHONE VERIFY (first time) -->
+  <div id="screen-verify" class="screen" style="display:none;">
+    <div class="auth-wrap">
+      <div class="auth-logo">
+        <span class="logo-dot"></span>
+        LabAttend
+      </div>
+      <p class="auth-sub">IIT ISM Dhanbad</p>
+
+      <div id="verify-step-phone">
+        <p class="auth-hint">Enter your registered phone number to get started.</p>
+        <div class="field-group">
+          <label for="input-phone">Phone number</label>
+          <div class="phone-row">
+            <span class="phone-prefix">+91</span>
+            <input type="tel" id="input-phone" placeholder="98XXXXXXXX" maxlength="10" inputmode="numeric" />
+          </div>
+        </div>
+        <button class="btn btn-full" id="btn-send-otp">Send OTP</button>
+        <div id="verify-msg" class="msg" aria-live="polite"></div>
+      </div>
+
+      <div id="verify-step-otp" style="display:none;">
+        <p class="auth-hint">OTP sent to <strong id="otp-sent-to"></strong>. Enter it below.</p>
+        <div class="field-group">
+          <label for="input-otp">OTP</label>
+          <input type="tel" id="input-otp" placeholder="XXXXXX" maxlength="6" inputmode="numeric" />
+        </div>
+        <button class="btn btn-full" id="btn-verify-otp">Verify & Continue</button>
+        <button class="btn-link" id="btn-change-phone">Change number</button>
+        <div id="otp-msg" class="msg" aria-live="polite"></div>
+      </div>
+
+      <!-- Admin entry -->
+      <div class="admin-entry-wrap">
+        <button class="btn-link admin-entry-btn" id="btn-admin-entry">Admin Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN LOGIN SCREEN (on verify page) -->
+  <div id="screen-admin-login" class="screen" style="display:none;">
+    <div class="auth-wrap">
+      <div class="auth-logo">
+        <span class="logo-dot"></span>
+        LabAttend
+      </div>
+      <p class="auth-sub">Admin Panel</p>
+      <p class="auth-hint">Enter admin password to continue.</p>
+      <div class="field-group">
+        <label for="admin-login-pass">Password</label>
+        <input type="password" id="admin-login-pass" placeholder="••••••" />
+      </div>
+      <button class="btn btn-full" id="btn-admin-login">Unlock Admin Panel</button>
+      <button class="btn-link" id="btn-back-to-verify">← Back</button>
+      <div id="admin-login-err" class="msg error" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- SCREEN: MAIN APP -->
+  <div id="screen-main" class="screen" style="display:none;">
+    <header>
+      <div class="header-inner">
+        <div class="logo">
+          <span class="logo-dot"></span>
+          LabAttend
+        </div>
+        <div class="header-right">
+          <span id="header-date"></span>
+          <button class="btn-icon" id="admin-btn" aria-label="Admin panel">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- MEMBER CARD -->
+      <section id="member-card">
+        <div class="mcard">
+          <div class="mcard-info">
+            <div class="mcard-name" id="mcard-name"></div>
+            <div class="mcard-role" id="mcard-role"></div>
+          </div>
+          <div class="mcard-status" id="mcard-status"></div>
+        </div>
+        <div class="mark-actions">
+          <button class="btn btn-checkin" id="checkin-btn">Check-in</button>
+          <button class="btn btn-checkout" id="checkout-btn">Check-out</button>
+        </div>
+        <div id="mark-msg" class="msg text-center" aria-live="polite"></div>
+      </section>
+
+      <!-- TODAY BOARD -->
+      <section id="board-section">
+        <div class="section-label">Today's board</div>
+        <div class="stats-row">
+          <div class="stat-card"><span class="stat-num" id="stat-present">0</span><span class="stat-label">Present</span></div>
+          <div class="stat-card"><span class="stat-num" id="stat-absent">0</span><span class="stat-label">Absent</span></div>
+          <div class="stat-card"><span class="stat-num" id="stat-total">0</span><span class="stat-label">Total</span></div>
+        </div>
+        <div class="board-table-wrap">
+          <table class="board-table" id="board-table">
+            <thead><tr><th>Name</th><th>Role</th><th>Status</th><th>In</th><th>Out</th></tr></thead>
+            <tbody id="board-tbody"></tbody>
+          </table>
+          <div id="board-empty" class="empty-state" style="display:none;">No members added yet.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ADMIN OVERLAY -->
+  <div id="admin-overlay" class="overlay" style="display:none;" role="dialog" aria-modal="true">
+    <div class="overlay-panel">
+      <div class="overlay-header">
+        <span class="overlay-title">Admin Panel</span>
+        <button class="btn-icon" id="close-overlay" aria-label="Close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Admin content (shown after login via admin screen) -->
+      <div id="admin-content">
+        <div class="tabs">
+          <button class="tab active" data-tab="members">Members</button>
+          <button class="tab" data-tab="history">History</button>
+        </div>
+
+        <!-- Members tab -->
+        <div id="tab-members" class="tab-content">
+          <div class="field-group" style="margin-top:1rem;">
+            <label>Add member</label>
+            <input type="text" id="new-name" placeholder="Full name" style="margin-bottom:8px;" />
+            <input type="tel" id="new-phone" placeholder="Phone number (10 digits)" inputmode="numeric" maxlength="10" style="margin-bottom:8px;" />
+            <div class="role-row">
+              <select id="new-role">
+                <option value="">— Select role —</option>
+                <option>Research Assistant</option>
+                <option>Project Associate</option>
+                <option>Intern</option>
+                <option value="__custom__">Other (type below)</option>
+              </select>
+              <input type="text" id="new-role-custom" placeholder="Custom role" style="display:none;" />
+            </div>
+            <button class="btn btn-full" id="add-member-btn" style="margin-top:8px;">Add Member</button>
+          </div>
+          <div id="add-err" class="msg error" aria-live="polite"></div>
+          <ul class="member-list" id="member-list"></ul>
+          <div id="member-empty" class="empty-state">No members yet.</div>
+        </div>
+
+        <!-- History tab -->
+        <div id="tab-history" class="tab-content" style="display:none;">
+          <div class="history-controls">
+            <input type="date" id="history-date" />
+            <button class="btn btn-sm" id="export-btn">Export CSV</button>
+          </div>
+          <table class="board-table" id="history-table">
+            <thead><tr><th>Name</th><th>Role</th><th>Date</th><th>In</th><th>Out</th><th>Hrs</th></tr></thead>
+            <tbody id="history-tbody"></tbody>
+          </table>
+          <div id="history-empty" class="empty-state" style="display:none;">No records.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GPS CHECKING OVERLAY -->
+  <div id="gps-overlay" class="overlay" style="display:none;">
+    <div class="gps-card">
+      <div class="gps-spinner"></div>
+      <p id="gps-msg">Verifying your location…</p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
