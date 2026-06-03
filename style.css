@@ -96,16 +96,27 @@ html, body {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   text-align: center;
-  padding: 16px 20px 32px;
+  padding: 12px 20px 36px;
   background: var(--white);
   border-top: 1px solid var(--grey-2);
+  z-index: 50;
 }
 .admin-entry-btn {
-  font-size: 13px;
-  color: var(--grey-4);
-  letter-spacing: 0.03em;
+  display: inline-block;
+  width: 100%;
+  max-width: 360px;
+  padding: 12px 20px;
+  background: var(--grey-1);
+  border: 1.5px solid var(--grey-2) !important;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--grey-5);
+  text-decoration: none;
+  letter-spacing: 0;
+  cursor: pointer;
 }
-.admin-entry-btn:hover { color: var(--black); }
+.admin-entry-btn:hover { background: var(--grey-2); color: var(--black); }
 
 /* ── HEADER ── */
 header {
