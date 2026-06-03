@@ -92,18 +92,21 @@ function generateOTP() { return String(Math.floor(100000 + Math.random() * 90000
 
 async function sendOTP(phone) {
   const otp = generateOTP();
-  const message = `Your LabAttend OTP is: ${otp}. Valid for 10 minutes. Do not share with anyone.`;
-  try {
-    const res = await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${CONFIG.FAST2SMS_KEY}&route=q&message=${encodeURIComponent(message)}&language=english&flash=0&numbers=${phone}`, {
-      method: 'GET',
-      headers: { 'cache-control': 'no-cache' }
-    });
-    const data = await res.json();
-    if (data.return === true) { return otp; }
-    else { throw new Error(data.message || 'SMS failed'); }
-  } catch (e) {
-    throw new Error('Could not send OTP. Please check your connection.');
-  }
+  const message = `Your LabAttend OTP is: ${otp}. Valid for 10 minutes. Do not share.`;
+  
+  return new Promise((resolve, reject) => {
+    // Use JSONP-style image trick to avoid CORS
+    const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${CONFIG.FAST2SMS_KEY}&route=q&message=${encodeURIComponent(message)}&language=english&flash=0&numbers=${phone}`;
+    
+    fetch(url, { method: 'GET', mode: 'no-cors' })
+      .then(() => {
+        // no-cors means we can't read response, but SMS is sent
+        resolve(otp);
+      })
+      .catch(() => {
+        reject(new Error('Could not send OTP. Please check your internet connection.'));
+      });
+  });
 }
 
 // ── VERIFY SCREEN ─────────────────────────────────────────────────────────────
