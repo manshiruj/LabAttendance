@@ -108,15 +108,17 @@ async function sendOTP(phone) {
 
 // ── VERIFY SCREEN ─────────────────────────────────────────────────────────────
 function showVerifyScreen() {
-  $('screen-verify').style.display = 'block';
-  $('screen-main').style.display   = 'none';
+  $('screen-verify').style.display    = 'block';
+  $('screen-main').style.display      = 'none';
+  $('admin-entry-wrap').style.display = 'block';
   $('verify-step-phone').style.display = 'block';
   $('verify-step-otp').style.display   = 'none';
 }
 
 function showMainScreen() {
-  $('screen-verify').style.display = 'none';
-  $('screen-main').style.display   = 'block';
+  $('screen-verify').style.display    = 'none';
+  $('screen-main').style.display      = 'block';
+  $('admin-entry-wrap').style.display = 'none';
 }
 
 $('btn-send-otp').addEventListener('click', async () => {
@@ -307,6 +309,7 @@ function closeOverlay() { $('admin-overlay').style.display = 'none'; }
 $('btn-admin-entry').addEventListener('click', () => {
   $('screen-verify').style.display      = 'none';
   $('screen-admin-login').style.display = 'block';
+  $('admin-entry-wrap').style.display   = 'none';
   $('admin-login-pass').value = '';
   $('admin-login-err').textContent = '';
 });
@@ -314,6 +317,7 @@ $('btn-admin-entry').addEventListener('click', () => {
 $('btn-back-to-verify').addEventListener('click', () => {
   $('screen-admin-login').style.display = 'none';
   $('screen-verify').style.display      = 'block';
+  $('admin-entry-wrap').style.display   = 'block';
 });
 
 $('btn-admin-login').addEventListener('click', unlockAdmin);
